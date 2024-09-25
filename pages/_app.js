@@ -5,29 +5,15 @@ function MyApp({ Component, pageProps }) {
   const [liffObject, setLiffObject] = useState(null)
   const [liffError, setLiffError] = useState(null)
 
-  // Execute liff.init() when the app is initialized
-  /*useEffect(() => {
-    // to avoid `window is not defined` error
-    import('@line/liff').then((liff) => {
-      console.log('LIFF init...')
-      liff
-        .init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID })
-        .then(() => {
-          console.log('LIFF init succeeded.')
-          setLiffObject(liff)
-        })
-        .catch((error) => {
-          console.log('LIFF init failed.')
-          setLiffError(error.toString())
-        })
-    })
-  }, [])*/
-
   useEffect(() => {
+    console.log('LIFF ID:', process.env.NEXT_PUBLIC_LIFF_ID)
     import('@line/liff')
       .then((module) => {
         const liff = module.default
         console.log('LIFF init...')
+        if (!process.env.NEXT_PUBLIC_LIFF_ID) {
+          throw new Error('LIFF ID is not set')
+        }
         return liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID })
       })
       .then(() => {
@@ -38,6 +24,7 @@ function MyApp({ Component, pageProps }) {
       })
       .catch((error) => {
         console.log('LIFF init failed.')
+        console.error('Error details:', error)
         setLiffError(error.toString())
       })
   }, [])
